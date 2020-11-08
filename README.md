@@ -1,6 +1,8 @@
 # PyAVL
 
-**PyAVL** is a Python library for AVL tree, a self-balancing binary search tree. It supports TreeSet and support for TreeMap is under development.
+**PyAVL** is a Python library for AVL tree, a self-balancing binary search tree. It supports TreeSet and TreeMap.
+
+**TreeSet**
 
 ```python
 >>> from pyavl.treeset import TreeSet
@@ -24,6 +26,31 @@ True
 []
 ```
 
+**TreeMap**
+
+```python
+>>> from pyavl.treemap import TreeMap
+>>> m = TreeMap([("d", 3), ("a", 5), ("c", -1), ("b", 2), ("a", 0)])
+>>> m["a"]
+0
+>>> "a" in m, "e" in m
+(True, False)
+>>> m["a"] = 10
+>>> m.items()
+[('a', 10), ('b', 2), ('c', -1), ('d', 3)]
+>>> m.update({"e": 4, "b": -100})
+>>> m.items()
+[('a', 10), ('b', -100), ('c', -1), ('d', 3), ('e', 4)]
+>>> m.min()
+('a', 10)
+>>> del m["c"]
+>>> m.values()
+[10, -100, 3, 4]
+>>> m.clear()
+>>> m.keys()
+[]
+```
+
 ## Installing PyAVL
 
 **PyAVL** is tested on Python3.7+. To install:
@@ -38,11 +65,17 @@ $ python setup.py install
 
 ## Tests and Benchmarks
 
-Tests and benchmarks can be found in the **tests** folders. To run:
+Tests and benchmarks can be found in the **tests** folders. To run tests:
 
-```
+```console
 $ cd tests
 $ python -m unittest discover -v
+```
+
+To run benchmarks in the folder of **tests**:
+
+```console
+$ python benchmark.py
 ```
 
 *You might need to change `python` above to `python3`.*
