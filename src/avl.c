@@ -283,3 +283,54 @@ _avl_delete_helper(avl_node_t *root, PyObject *key, int *ret, avl_node_t **delet
 
     return root;
 }
+
+/* `avl_iter_t` starts here */
+
+static void _avl_iter_set_next(avl_iter_t *iter) {
+    if (!iter || !(iter->next)) return;
+    avl_node_t **stack = iter->stack;
+    avl_node_t *next = iter->next;
+    int idx = iter->idx;
+
+    if (AVL_RIGHT(next)) {
+        next = AVL_RIGHT(next);
+        while (AVL_LEFT(next)) {
+            stack[idx ++] = next;
+            next = AVL_LEFT(next);
+        }
+    } else if (idx > 0) {
+        next = stack[-- idx];
+    } else {
+        next = NULL;
+    }
+
+    iter->next = next;
+    iter->idx = idx;
+}
+
+extern avl_iter_t* avl_iter_new(avl_node_t *root) {
+    avl_iter_t *iter = (avl_iter_t *)malloc(sizeof(avl_iter_t));
+    if (!iter) return NULL;
+    int idx = 0;
+    if (root) {
+        while (AVL_LEFT(root)) {
+            iter->stack[idx ++] = root;
+            root = AVL_LEFT(root);
+        }
+    }
+    iter->next = root;
+    iter->idx = idx;
+    return iter;
+}
+
+extern void avl_iter_free(avl_iter_t *iter) {
+    if (!iter) return;
+    free(iter);
+}
+
+extern avl_node_t* avl_iter_next(avl_iter_t *iter) {
+    if (!iter) return NULL;
+    avl_node_t *ret = iter->next;
+    _avl_iter_set_next(iter);
+    return ret;
+}

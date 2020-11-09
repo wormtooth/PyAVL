@@ -167,4 +167,37 @@ avl_node_find(avl_node_t *root, PyObject *key, int *ret);
 extern void
 avl_node_foreach(avl_node_t *root, avl_func func, void *extra);
 
+/**
+ *  `avl_iter_t` provides iterator protocol for `avl_node_t *`
+ */
+
+typedef struct _avl_iter {
+    avl_node_t *next;
+    avl_node_t *stack[128];
+    int idx;
+} avl_iter_t;
+
+/**
+ * @brief Create an iterator associated to an AVL tree.
+ * 
+ * @param root The root of an AVL tree.
+ * @return Return the created iterator on success, NULL on failure.
+ */
+extern avl_iter_t* avl_iter_new(avl_node_t *root);
+
+/**
+ * @brief Free an iterator.
+ * 
+ * @param root The root of an AVL tree.
+ */
+extern void avl_iter_free(avl_iter_t *iter);
+
+/**
+ * @brief Return the next node in an AVL tree.
+ * 
+ * @param iter The iterator assoicated to an AVL tree.
+ * @return Return the node on success, NULL if stopped. 
+ */
+extern avl_node_t* avl_iter_next(avl_iter_t *iter);
+
 #endif
