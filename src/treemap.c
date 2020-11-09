@@ -164,6 +164,11 @@ static int treemap_update(TreeMapObj *self, PyObject *mapping) {
         ret = -1;
         if (PyDict_MergeFromSeq2(mp, mapping, 1) == 0) {
             ret = treemap_update(self, mp);
+        } else {
+            PyErr_SetString(
+                PyExc_ValueError,
+                "Fails to convert argument to a dict."
+            );
         }
         Py_DECREF(mp);
         return ret;
@@ -227,7 +232,8 @@ static PyObject* TreeMapObj_max(TreeMapObj *self) {
 /* init */
 static PyObject*
 TreeMapObj_init(TreeMapObj *self, PyObject *args, PyObject *kwargs) {
-    if (args && PyTuple_Size(args) > 1) {
+    int argc = args? PyTuple_Size(args): 0;
+    if (argc > 1) {
         PyErr_SetString(
             PyExc_ValueError,
             "TreeMap.__init__ takes at most 1 positional argument."
@@ -235,7 +241,7 @@ TreeMapObj_init(TreeMapObj *self, PyObject *args, PyObject *kwargs) {
         return NULL;
     }
 
-    if (PyTuple_Size(args) == 1) {
+    if (argc == 1) {
         PyObject *obj;
         if (!PyArg_ParseTuple(args, "O:__init__", &obj)) {
             return NULL;

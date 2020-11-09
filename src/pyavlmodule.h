@@ -3,7 +3,7 @@
 
 #define PYAVL_VERSION_MAJOR 1
 #define PYAVL_VERSION_MINOR 0
-#define PYAVL_VERSION_MICRO 0
+#define PYAVL_VERSION_MICRO 1
 
 PyTypeObject TreeSet_Type;
 #define TreeSetObj_Check(obj)    (Py_TYPE(obj) == &TreeSet_Type)
