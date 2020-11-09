@@ -1,13 +1,28 @@
 from distutils.core import setup, Extension
+import glob
 
-TreeSetExt = Extension(
-    "pyavl.treeset",
-    sources=["src/avl.c", "src/treeset.c"]
-)
+def get_version():
+    vermap = {
+        "major": "#define PYAVL_VERSION_MAJOR",
+        "minor": "#define PYAVL_VERSION_MINOR",
+        "micro": "#define PYAVL_VERSION_MICRO"
+    }
+    ver = {}
+    with open("src/pyavlmodule.h", "r") as f:
+        for line in f:
+            for k, v in vermap.items():
+                if k in ver:
+                    continue
+                if line.startswith(v):
+                    line = line[len(v):].strip()
+                    ver[k] = int(line)
+    return "{}.{}.{}".format(
+        ver["major"], ver["minor"], ver["micro"]
+    )
 
-TreeMapExt = Extension(
-    "pyavl.treemap",
-    sources=["src/avl.c", "src/treemap.c"]
+PyAVLExt = Extension(
+    "pyavl",
+    sources=glob.glob("src/*.c")
 )
 
 with open("README.md", "r") as f:
@@ -15,14 +30,13 @@ with open("README.md", "r") as f:
 
 setup(
     name="pyavl",
-    packages=["pyavl"],
-    version="0.1",
+    version=get_version(),
     description="Python C extension library for AVL tree.",
     long_description=long_description,
     author="wormtooth",
     author_email="ye@wormtooth.com",
     maintainer="wormtooth",
     ext_modules=[
-        TreeSetExt, TreeMapExt
+        PyAVLExt
     ]
 )

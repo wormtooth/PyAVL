@@ -1,5 +1,5 @@
 import unittest
-from pyavl.treemap import TreeMap
+from pyavl import TreeMap
 import random
 
 class TreeMapTest(unittest.TestCase):

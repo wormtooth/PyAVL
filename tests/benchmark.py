@@ -1,6 +1,5 @@
 import unittest
-from pyavl.treeset import TreeSet
-from pyavl.treemap import TreeMap
+from pyavl import TreeSet, TreeMap
 import random
 import time
 

@@ -2,16 +2,13 @@
 #include <Python.h>
 
 #include "avl.h"
+#include "pyavlmodule.h"
 
 typedef struct {
     PyObject_HEAD
     avl_node_t *root;
     Py_ssize_t size;
 } TreeSetObj;
-
-static PyTypeObject TreeSet_Type;
-
-#define TreeSetObj_Check(obj)    (Py_TYPE(obj) == &TreeSet_Type)
 
 static PyObject* TreeSetObj_new(PyTypeObject *type, PyObject *args, PyObject *kwargs) {
     TreeSetObj *self;
@@ -249,11 +246,11 @@ static PySequenceMethods TreeSetObj_Seq = {
     .sq_contains = (objobjproc)TreeSetObj_contains
 };
 
-static PyTypeObject TreeSet_Type = {
+PyTypeObject TreeSet_Type = {
     /* The ob_type field must be initialized in the module init function
      * to be portable to Windows without using C++. */
     PyVarObject_HEAD_INIT(NULL, 0)
-    "pyavl.treeset.TreeSet",    /*tp_name*/
+    "pyavl.TreeSet",            /*tp_name*/
     sizeof(TreeSetObj),         /*tp_basicsize*/
     0,                          /*tp_itemsize*/
     /* methods */
@@ -294,31 +291,3 @@ static PyTypeObject TreeSet_Type = {
     0,                          /*tp_free*/
     0,                          /*tp_is_gc*/
 };
-
-static struct PyModuleDef treeset_module = {
-    PyModuleDef_HEAD_INIT,
-    "treeset",
-    "TreeSet using AVL tree.",
-    -1,
-};
-
-PyMODINIT_FUNC PyInit_treeset() {
-    PyObject *m;
-
-    if (PyType_Ready(&TreeSet_Type) < 0) {
-        return NULL;
-    }
-    m = PyModule_Create(&treeset_module);
-    if (m == NULL) {
-        return NULL;
-    }
-
-    Py_INCREF(&TreeSet_Type);
-    if (PyModule_AddObject(m, "TreeSet", (PyObject *)(&TreeSet_Type)) < 0) {
-        Py_DECREF(&TreeSet_Type);
-        Py_DECREF(m);
-        return NULL;
-    }
-
-    return m;
-}

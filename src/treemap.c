@@ -2,6 +2,7 @@
 #include <Python.h>
 
 #include "avl.h"
+#include "pyavlmodule.h"
 
 typedef struct {
     AVL_NODE_HEAD
@@ -32,10 +33,6 @@ typedef struct {
     avl_map_t *root;
     Py_ssize_t size;
 } TreeMapObj;
-
-static PyTypeObject TreeMap_Type;
-
-#define TreeMapObj_Check(obj)    (Py_TYPE(obj) == &TreeMap_Type)
 
 static PyObject* TreeMapObj_new(PyTypeObject *type, PyObject *args, PyObject *kwargs) {
     TreeMapObj *self;
@@ -374,11 +371,11 @@ static PyMethodDef TreeMapObj_Methods[] = {
     {NULL}
 };
 
-static PyTypeObject TreeMap_Type = {
+PyTypeObject TreeMap_Type = {
     /* The ob_type field must be initialized in the module init function
      * to be portable to Windows without using C++. */
     PyVarObject_HEAD_INIT(NULL, 0)
-    "pyavl.treemap.TreeMap",    /*tp_name*/
+    "pyavl.TreeMap",            /*tp_name*/
     sizeof(TreeMapObj),         /*tp_basicsize*/
     0,                          /*tp_itemsize*/
     /* methods */
@@ -419,31 +416,3 @@ static PyTypeObject TreeMap_Type = {
     0,                          /*tp_free*/
     0,                          /*tp_is_gc*/
 };
-
-static struct PyModuleDef treemap_module = {
-    PyModuleDef_HEAD_INIT,
-    "treemap",
-    "TreeMap using AVL tree.",
-    -1,
-};
-
-PyMODINIT_FUNC PyInit_treemap() {
-    PyObject *m;
-
-    if (PyType_Ready(&TreeMap_Type) < 0) {
-        return NULL;
-    }
-    m = PyModule_Create(&treemap_module);
-    if (m == NULL) {
-        return NULL;
-    }
-
-    Py_INCREF(&TreeMap_Type);
-    if (PyModule_AddObject(m, "TreeMap", (PyObject *)(&TreeMap_Type)) < 0) {
-        Py_DECREF(&TreeMap_Type);
-        Py_DECREF(m);
-        return NULL;
-    }
-
-    return m;
-}

@@ -1,5 +1,5 @@
 import unittest
-from pyavl.treeset import TreeSet
+from pyavl import TreeSet
 import random
 
 class TreeSetTest(unittest.TestCase):

@@ -5,7 +5,7 @@
 **TreeSet**
 
 ```python
->>> from pyavl.treeset import TreeSet
+>>> from pyavl import TreeSet
 >>> ts = TreeSet([3, 4, 1, 8, -2])
 >>> ts.keys()
 [-2, 1, 3, 4, 8]
@@ -29,7 +29,7 @@ True
 **TreeMap**
 
 ```python
->>> from pyavl.treemap import TreeMap
+>>> from pyavl import TreeMap
 >>> m = TreeMap([("d", 3), ("a", 5), ("c", -1), ("b", 2), ("a", 0)])
 >>> m["a"]
 0
