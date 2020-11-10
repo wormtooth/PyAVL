@@ -93,42 +93,49 @@ static PyObject* TreeMapObj_get(TreeMapObj *self, PyObject *args) {
     return ret;
 }
 
-static void add_key_to_list(avl_map_t *node, PyObject *list) {
-    PyList_Append(list, AVL_KEY(node));
+static PyObject* treemap_getkey(avl_map_t *node) {
+    if (!node) {
+        return NULL;
+    }
+    PyObject *key = AVL_KEY(node);
+    Py_INCREF(key);
+    return key;
 }
 
 static PyObject* TreeMapObj_keys(TreeMapObj *self) {
-    PyObject *list = PyList_New(0);
-    avl_node_foreach(
-        (avl_node_t *)self->root, (avl_func)add_key_to_list, (void *)list
+    return TreeIter_NewFromRoot(
+        (avl_node_t *)self->root, (avl_iter_getter)treemap_getkey
     );
-    return list;
 }
 
-static void add_val_to_list(avl_map_t *node, PyObject *list) {
-    PyList_Append(list, node->val);
+static PyObject* treemap_getval(avl_map_t *node) {
+    if (!node) {
+        return NULL;
+    }
+    PyObject *val = node->val;
+    Py_INCREF(val);
+    return val;
 }
 
 static PyObject* TreeMapObj_values(TreeMapObj *self) {
-    PyObject *list = PyList_New(0);
-    avl_node_foreach(
-        (avl_node_t *)self->root, (avl_func)add_val_to_list, (void *)list
+    return TreeIter_NewFromRoot(
+        (avl_node_t *)self->root, (avl_iter_getter)treemap_getval
     );
-    return list;
 }
 
-static void add_item_to_list(avl_map_t *node, PyObject *list) {
-    PyObject *item = Py_BuildValue("(OO)", AVL_KEY(node), node->val);
-    PyList_Append(list, item);
-    Py_DECREF(item);
+static PyObject* treemap_getitem(avl_map_t *node) {
+    if (!node) {
+        return NULL;
+    }
+    PyObject *key = AVL_KEY(node);
+    PyObject *val = node->val;
+    return Py_BuildValue("(OO)", key, val);
 }
 
 static PyObject* TreeMapObj_items(TreeMapObj *self) {
-    PyObject *list = PyList_New(0);
-    avl_node_foreach(
-        (avl_node_t *)self->root, (avl_func)add_item_to_list, (void *)list
+    return TreeIter_NewFromRoot(
+        (avl_node_t *)self->root, (avl_iter_getter)treemap_getitem
     );
-    return list;
 }
 
 static int treemap_insert(TreeMapObj *self, PyObject *key, PyObject *val) {
@@ -406,7 +413,7 @@ PyTypeObject TreeMap_Type = {
     0,                          /*tp_clear*/
     0,                          /*tp_richcompare*/
     0,                          /*tp_weaklistoffset*/
-    0,                          /*tp_iter*/
+    (getiterfunc)TreeMapObj_keys,/*tp_iter*/
     0,                          /*tp_iternext*/
     TreeMapObj_Methods,         /*tp_methods*/
     0,                          /*tp_members*/

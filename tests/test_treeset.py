@@ -16,7 +16,7 @@ class TreeSetTest(unittest.TestCase):
                 "size of TreeSet is wrong.")
 
         self.assertEqual(
-            sorted(s), ts.keys(),
+            sorted(s), list(ts),
             "TreeSet.keys fails")
     
     def test_init(self):
@@ -24,7 +24,7 @@ class TreeSetTest(unittest.TestCase):
         s = set(data)
         ts = TreeSet(data)
         self.assertEqual(
-            sorted(s), ts.keys(),
+            sorted(s), list(ts),
             "TreeSet.__init__ fails")
     
     def test_extend(self):
@@ -33,7 +33,7 @@ class TreeSetTest(unittest.TestCase):
         ts = TreeSet()
         ts.extend(data)
         self.assertEqual(
-            sorted(s), ts.keys(),
+            sorted(s), list(ts),
             "TreeSet.extend fails")
     
     def test_remove(self):
@@ -46,7 +46,7 @@ class TreeSetTest(unittest.TestCase):
                 s.remove(x)
             ts.remove(x)
             self.assertEqual(
-                sorted(s), ts.keys(),
+                sorted(s), list(ts),
                 "TreeSet.remove fails")
     
     def test_clear(self):
@@ -55,7 +55,7 @@ class TreeSetTest(unittest.TestCase):
         ts = TreeSet(data)
         ts.clear()
         self.assertEqual(
-            ts.keys(), [], "TreeSet.clear fails"
+            list(ts), [], "TreeSet.clear fails"
         )
         self.assertEqual(
             ts.size(), 0, "TreeSet.clear fails"

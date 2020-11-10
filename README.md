@@ -7,7 +7,7 @@
 ```python
 >>> from pyavl import TreeSet
 >>> ts = TreeSet([3, 4, 1, 8, -2])
->>> ts.keys()
+>>> list(ts)
 [-2, 1, 3, 4, 8]
 >>> 1 in ts
 True
@@ -22,7 +22,7 @@ True
 >>> ts.min(), ts.max()
 (-2, 9)
 >>> ts.clear()
->>> ts.keys()
+>>> list(ts)
 []
 ```
 
@@ -36,24 +36,24 @@ True
 >>> "a" in m, "e" in m
 (True, False)
 >>> m["a"] = 10
->>> m.items()
+>>> list(m.items())
 [('a', 10), ('b', 2), ('c', -1), ('d', 3)]
 >>> m.update({"e": 4, "b": -100})
->>> m.items()
+>>> list(m.items())
 [('a', 10), ('b', -100), ('c', -1), ('d', 3), ('e', 4)]
 >>> m.min()
 ('a', 10)
 >>> del m["c"]
->>> m.values()
+>>> list(m.values())
 [10, -100, 3, 4]
 >>> m.clear()
->>> m.keys()
+>>> list(m.keys()) # or list(m)
 []
 ```
 
 ## Installing PyAVL
 
-**PyAVL** is tested on Python3.7+. To install:
+To install **PyAVL**:
 
 ```console
 $ git clone https://github.com/wormtooth/PyAVL.git PyAVL

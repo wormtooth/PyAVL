@@ -130,14 +130,19 @@ static int TreeSetObj_init(TreeSetObj *self, PyObject *args) {
     return 0;
 }
 
-static void add_key_to_list(avl_node_t *node, PyObject *list) {
-    PyList_Append(list, AVL_KEY(node));
+static PyObject* treeset_getkey(avl_node_t *node) {
+    if (!node) {
+        return NULL;
+    }
+    PyObject *key = AVL_KEY(node);
+    Py_INCREF(key);
+    return key;
 }
 
-static PyObject* TreeSetObj_keys(TreeSetObj *self) {
-    PyObject *list = PyList_New(0);
-    avl_node_foreach(self->root, (avl_func)add_key_to_list, (void *)list);
-    return list;
+static PyObject* TreeSetObj_iter(TreeSetObj *self) {
+    return TreeIter_NewFromRoot(
+        self->root, (avl_iter_getter)treeset_getkey
+    );
 }
 
 static PyObject* TreeSetObj_size(TreeSetObj *self) {
@@ -196,12 +201,6 @@ static PyMethodDef TreeSetObj_Methods[] = {
         (PyCFunction)TreeSetObj_extend,
         METH_VARARGS,
         "Extends the TreeSet by an iterable."
-    },
-    {
-        "keys",
-        (PyCFunction)TreeSetObj_keys,
-        METH_NOARGS,
-        "Get all keys of the TreeSet in an sorted list."
     },
     {
         "max",
@@ -275,7 +274,7 @@ PyTypeObject TreeSet_Type = {
     0,                          /*tp_clear*/
     0,                          /*tp_richcompare*/
     0,                          /*tp_weaklistoffset*/
-    0,                          /*tp_iter*/
+    (getiterfunc)TreeSetObj_iter,/*tp_iter*/
     0,                          /*tp_iternext*/
     TreeSetObj_Methods,         /*tp_methods*/
     0,                          /*tp_members*/

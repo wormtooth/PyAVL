@@ -6,15 +6,15 @@ class TreeMapTest(unittest.TestCase):
     
     def test_init(self):
         m = TreeMap({"c":2, "a":3, "b": 1})
-        self.assertEqual(m.items(), [("a", 3), ("b", 1), ("c", 2)])
+        self.assertEqual(list(m.items()), [("a", 3), ("b", 1), ("c", 2)])
         self.assertEqual(len(m), 3)
         
         m = TreeMap([("b", 1), ("a", 3), ("c", 2)])
-        self.assertEqual(m.items(), [("a", 3), ("b", 1), ("c", 2)])
+        self.assertEqual(list(m.items()), [("a", 3), ("b", 1), ("c", 2)])
         self.assertEqual(len(m), 3)
         
         m = TreeMap(c=2, a=3, b=1)
-        self.assertEqual(m.items(), [("a", 3), ("b", 1), ("c", 2)])
+        self.assertEqual(list(m.items()), [("a", 3), ("b", 1), ("c", 2)])
         self.assertEqual(len(m), 3)
 
         data = [
@@ -23,7 +23,7 @@ class TreeMapTest(unittest.TestCase):
         ]
         d = dict(data)
         m = TreeMap(data)
-        self.assertEqual(m.items(), sorted(d.items()))
+        self.assertEqual(list(m.items()), sorted(d.items()))
         self.assertEqual(len(m), len(d))
     
     def test_get(self):
@@ -54,7 +54,7 @@ class TreeMapTest(unittest.TestCase):
             m[k] = v
             self.assertEqual(len(m), len(d))
             self.assertEqual(m[k], d[k])
-        self.assertEqual(m.items(), sorted(d.items()))
+        self.assertEqual(list(m.items()), sorted(d.items()))
     
     def test_del(self):
         data = [(n, n) for n in range(1000)]
@@ -64,7 +64,7 @@ class TreeMapTest(unittest.TestCase):
             del d[n]
             del m[n]
             self.assertEqual(len(m), len(d))
-        self.assertEqual(m.items(), sorted(d.items()))
+        self.assertEqual(list(m.items()), sorted(d.items()))
 
         with self.assertRaises(KeyError):
             del m[10000]
@@ -91,7 +91,7 @@ class TreeMapTest(unittest.TestCase):
         d.update(data)
         m.update(data)
         self.assertEqual(len(m), len(d))
-        self.assertEqual(m.items(), sorted(d.items()))
+        self.assertEqual(list(m.items()), sorted(d.items()))
     
     def test_clear(self):
         m = TreeMap(
@@ -99,7 +99,7 @@ class TreeMapTest(unittest.TestCase):
             for _ in range(10000)
         )
         m.clear()
-        self.assertEqual(m.items(), [])
+        self.assertEqual(list(m.items()), [])
         self.assertEqual(len(m), 0)
     
     def test_minmax(self):

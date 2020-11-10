@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#include "avl.h"
 #include "pyavlmodule.h"
 
 static PyObject* pyavl_version(PyObject *self) {
@@ -35,6 +36,9 @@ static struct PyModuleDef pyavl_module = {
 PyMODINIT_FUNC PyInit_pyavl() {
     PyObject *m;
 
+    if (PyType_Ready(&TreeIter_Type) < 0) {
+        return NULL;
+    }
     if (PyType_Ready(&TreeSet_Type) < 0) {
         return NULL;
     }
@@ -47,6 +51,7 @@ PyMODINIT_FUNC PyInit_pyavl() {
         return NULL;
     }
 
+    Py_INCREF(&TreeIter_Type);
     Py_INCREF(&TreeSet_Type);
     Py_INCREF(&TreeMap_Type);
     if (PyModule_AddObject(m, "TreeSet", (PyObject *)(&TreeSet_Type)) < 0) {
@@ -58,6 +63,7 @@ PyMODINIT_FUNC PyInit_pyavl() {
     }
     return m;
 error:
+    Py_DECREF(&TreeIter_Type);
     Py_DECREF(&TreeSet_Type);
     Py_DECREF(&TreeMap_Type);
     Py_DECREF(m);
