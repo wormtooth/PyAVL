@@ -37,7 +37,8 @@ typedef struct {
 static PyObject* TreeMapObj_new(PyTypeObject *type, PyObject *args, PyObject *kwargs) {
     TreeMapObj *self;
     self = (TreeMapObj *)type->tp_alloc(type, 0);
-    if (self == NULL) {
+    if (!self) {
+        PyErr_NoMemory();
         return NULL;
     }
     self->root = NULL;
