@@ -9,6 +9,7 @@
 
 extern void avl_node_init(avl_node_t *node, PyObject *key) {
     AVL_HEIGHT(node) = 1;
+    AVL_SIZE(node) = 1;
     AVL_LEFT(node) = NULL;
     AVL_RIGHT(node) = NULL;
     Py_INCREF(key);
@@ -111,6 +112,27 @@ avl_node_foreach(avl_node_t *root, avl_func func, void *extra) {
     }
 }
 
+extern avl_node_t*
+avl_node_at(avl_node_t *root, int loc) {
+    if (loc < 0 || loc >= AVL_SIZE0(root)) {
+        return NULL;
+    }
+    uint64_t p = loc;
+    uint64_t lsize = AVL_SIZE0(AVL_LEFT(root));
+
+    while (lsize != p) {
+        if (lsize > p) {
+            root = AVL_LEFT(root);
+        } else {
+            p = p - lsize - 1;
+            root = AVL_RIGHT(root);
+        }
+        lsize = AVL_SIZE0(AVL_LEFT(root));
+    }
+
+    return root;
+}
+
 /* Implementation of Static Functions */
 
 static int _avl_py_cmp(PyObject *a, PyObject *b) {
@@ -147,6 +169,8 @@ static avl_node_t* _avl_right_rotate(avl_node_t *y) {
 
     AVL_HEIGHT(y) = Py_MAX(AVL_HEIGHT0(AVL_LEFT(y)), AVL_HEIGHT0(AVL_RIGHT(y))) + 1;
     AVL_HEIGHT(x) = Py_MAX(AVL_HEIGHT0(AVL_LEFT(x)), AVL_HEIGHT0(AVL_RIGHT(x))) + 1;
+    AVL_SIZE(y) = AVL_SIZE0(AVL_LEFT(y)) + AVL_SIZE0(AVL_RIGHT(y)) + 1;
+    AVL_SIZE(x) = AVL_SIZE0(AVL_LEFT(x)) + AVL_SIZE0(AVL_RIGHT(x)) + 1;
 
     return x;
 }
@@ -160,6 +184,8 @@ static avl_node_t* _avl_left_rotate(avl_node_t *x) {
 
     AVL_HEIGHT(x) = Py_MAX(AVL_HEIGHT0(AVL_LEFT(x)), AVL_HEIGHT0(AVL_RIGHT(x))) + 1;
     AVL_HEIGHT(y) = Py_MAX(AVL_HEIGHT0(AVL_LEFT(y)), AVL_HEIGHT0(AVL_RIGHT(y))) + 1;
+    AVL_SIZE(x) = AVL_SIZE0(AVL_LEFT(x)) + AVL_SIZE0(AVL_RIGHT(x)) + 1;
+    AVL_SIZE(y) = AVL_SIZE0(AVL_LEFT(y)) + AVL_SIZE0(AVL_RIGHT(y)) + 1;
 
     return y;
 }
@@ -189,6 +215,7 @@ _avl_insert_helper(avl_node_t *root, avl_node_t *node, int *ret, avl_node_t **fo
     int lh = AVL_HEIGHT0(AVL_LEFT(root));
     int rh = AVL_HEIGHT0(AVL_RIGHT(root));
     AVL_HEIGHT(root) = Py_MAX(lh, rh) + 1;
+    AVL_SIZE(root) = AVL_SIZE0(AVL_LEFT(root)) + AVL_SIZE0(AVL_RIGHT(root)) + 1;
     int balance = lh - rh;
 
     if (balance > 1) {
@@ -259,6 +286,7 @@ _avl_delete_helper(avl_node_t *root, PyObject *key, int *ret, avl_node_t **delet
     int lh = AVL_HEIGHT0(AVL_LEFT(root));
     int rh = AVL_HEIGHT0(AVL_RIGHT(root));
     AVL_HEIGHT(root) = Py_MAX(lh, rh) + 1;
+    AVL_SIZE(root) = AVL_SIZE0(AVL_LEFT(root)) + AVL_SIZE0(AVL_RIGHT(root)) + 1;
     int balance = lh - rh;
 
     if (balance > 1) {

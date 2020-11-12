@@ -14,7 +14,7 @@
  * Then `your_ext_t *` can be casted to `avl_node_t *` when used in insert, delete,
  * find and foreach.
  * 
- * @version 0.2
+ * @version 0.3
  * 
  * @copyright Copyright (c) 2020
  * 
@@ -23,13 +23,16 @@
 #ifndef PY_AVL_H
 #define PY_AVL_H
 
+#include <stdint.h>
+
 typedef struct _object PyObject;
 
 typedef struct _avl_node {
     struct _avl_node *left;
     struct _avl_node *right;
-    int height;
     PyObject *key;
+    uint64_t height:8;
+    uint64_t size:56;
 } avl_node_t;
 
 typedef void (*avl_func)(avl_node_t *, void *);
@@ -63,6 +66,18 @@ typedef void (*avl_func)(avl_node_t *, void *);
  * 
  */
 #define AVL_HEIGHT0(root)   ((root)? AVL_HEIGHT(root): 0)
+
+/**
+ * @brief Size of root.
+ * 
+ */
+#define AVL_SIZE(root)    ((avl_node_t*)(root))->size
+
+/**
+ * @brief Size of root, but return 0 if root is NULL. Can only be rvalue.
+ * 
+ */
+#define AVL_SIZE0(root)   ((root)? AVL_SIZE(root): 0)
 
 /**
  * @brief Key of root.
@@ -166,6 +181,17 @@ avl_node_find(avl_node_t *root, PyObject *key, int *ret);
  */
 extern void
 avl_node_foreach(avl_node_t *root, avl_func func, void *extra);
+
+/**
+ * @brief Get the node at a given position in an AVL tree.
+ * 
+ * @param root The root of an AVL tree.
+ * @param loc The location index of the node to get, indexed from 0.
+ * @return Return NULL if the index is out of range, and the node at given index
+ * if the index is in the range.
+ */
+extern avl_node_t*
+avl_node_at(avl_node_t *root, int loc);
 
 /**
  *  `avl_iter_t` provides iterator protocol for `avl_node_t *`
