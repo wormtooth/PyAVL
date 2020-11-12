@@ -145,10 +145,6 @@ static PyObject* TreeSetObj_iter(TreeSetObj *self) {
     );
 }
 
-static PyObject* TreeSetObj_size(TreeSetObj *self) {
-    return Py_BuildValue("n", self->size);
-}
-
 static PyObject* TreeSetObj_min(TreeSetObj *self) {
     avl_node_t *root = self->root;
     if (!root) {
@@ -219,12 +215,6 @@ static PyMethodDef TreeSetObj_Methods[] = {
         (PyCFunction)TreeSetObj_remove,
         METH_VARARGS,
         "Remove an object from the TreeSet."
-    },
-    {
-        "size",
-        (PyCFunction)TreeSetObj_size,
-        METH_NOARGS,
-        "Get the size of the TreeSet."
     },
     {NULL}
 };

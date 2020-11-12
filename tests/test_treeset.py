@@ -58,7 +58,7 @@ class TreeSetTest(unittest.TestCase):
             list(ts), [], "TreeSet.clear fails"
         )
         self.assertEqual(
-            ts.size(), 0, "TreeSet.clear fails"
+            len(ts), 0, "TreeSet.clear fails"
         )
     
     def test_minmax(self):
