@@ -14,7 +14,7 @@
  * Then `your_ext_t *` can be casted to `avl_node_t *` when used in insert, delete,
  * find and foreach.
  * 
- * @version 0.1
+ * @version 0.2
  * 
  * @copyright Copyright (c) 2020
  * 
