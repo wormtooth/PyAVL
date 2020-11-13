@@ -71,6 +71,19 @@ class TreeSetTest(unittest.TestCase):
             self.assertEqual(
                 max(data), ts.max(), "TreeSet.max fails"
             )
+    
+    def test_at(self):
+        s = TreeSet(range(100))
+        keys = list(s)
+        # test loc
+        for i, n in enumerate(keys):
+            self.assertEqual(n, s.loc(i))
+        with self.assertRaises(IndexError):
+            s.loc(101)
+        # test at_most
+        self.assertEqual(s.at_most(23.3), 23)
+        # test at_least
+        self.assertEqual(s.at_least(23.3), 24)
 
 if __name__ == "__main__":
     unittest.main()

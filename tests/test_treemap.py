@@ -112,6 +112,21 @@ class TreeMapTest(unittest.TestCase):
 
         self.assertEqual(m.min(), min(d.items()))
         self.assertEqual(m.max(), max(d.items()))
+    
+    def test_at(self):
+        m = TreeMap(
+            {n: n for n in range(100)}
+        )
+        items = list(m.items())
+        # test loc
+        for i, item in enumerate(items):
+            self.assertEqual(item, m.loc(i))
+        with self.assertRaises(IndexError):
+            m.loc(101)
+        # test at_most
+        self.assertEqual(m.at_most(23.3), 23)
+        # test at_least
+        self.assertEqual(m.at_least(23.3), 24)
 
 
 
