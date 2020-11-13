@@ -179,12 +179,79 @@ static PyObject* TreeSetObj_max(TreeSetObj *self) {
     return ret;
 }
 
+static PyObject* TreeSetObj_loc(TreeSetObj *self, PyObject *args) {
+    int idx;
+    if (!PyArg_ParseTuple(args, "i:loc", &idx)) {
+        return NULL;
+    }
+    int loc = idx;
+    if (loc < 0) {
+        loc += (int)self->size;
+    }
+    avl_node_t *node = avl_node_loc(self->root, loc);
+    if (!node) {
+        PyErr_SetString(
+            PyExc_IndexError, "TreeSet index out of range"
+        );
+        return NULL;
+    }
+    PyObject *ret = AVL_KEY(node);
+    Py_INCREF(ret);
+    return ret;
+}
+
+static PyObject* TreeSetObj_at_most(TreeSetObj *self, PyObject *args) {
+    PyObject *key;
+    if (!PyArg_ParseTuple(args, "O:at_most", &key)) {
+        return NULL;
+    }
+    int ret;
+    avl_node_t *node = avl_node_at_most(self->root, key, &ret);
+    if (ret < 0) {
+        return NULL;
+    } else if (ret == 0) {
+        Py_RETURN_NONE;
+    }
+    key = AVL_KEY(node);
+    Py_INCREF(key);
+    return key;
+}
+
+static PyObject* TreeSetObj_at_least(TreeSetObj *self, PyObject *args) {
+    PyObject *key;
+    if (!PyArg_ParseTuple(args, "O:at_least", &key)) {
+        return NULL;
+    }
+    int ret;
+    avl_node_t *node = avl_node_at_least(self->root, key, &ret);
+    if (ret < 0) {
+        return NULL;
+    } else if (ret == 0) {
+        Py_RETURN_NONE;
+    }
+    key = AVL_KEY(node);
+    Py_INCREF(key);
+    return key;
+}
+
 static PyMethodDef TreeSetObj_Methods[] = {
     {
         "add",
         (PyCFunction)TreeSetObj_add,
         METH_VARARGS,
         "Add an object into the TreeSet."
+    },
+    {
+        "at_most",
+        (PyCFunction)TreeSetObj_at_most,
+        METH_VARARGS,
+        "Get the largest key in the TreeSet that is not bigger than the given key."
+    },
+    {
+        "at_least",
+        (PyCFunction)TreeSetObj_at_least,
+        METH_VARARGS,
+        "Get the smallest key in the TreeSet that is not smaller than the given key."
     },
     {
         "clear",
@@ -197,6 +264,12 @@ static PyMethodDef TreeSetObj_Methods[] = {
         (PyCFunction)TreeSetObj_extend,
         METH_VARARGS,
         "Extends the TreeSet by an iterable."
+    },
+    {
+        "loc",
+        (PyCFunction)TreeSetObj_loc,
+        METH_VARARGS,
+        "Return the key at the given location."
     },
     {
         "max",
