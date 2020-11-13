@@ -237,6 +237,63 @@ static PyObject* TreeMapObj_max(TreeMapObj *self) {
     return Py_BuildValue("(OO)", key, val);
 }
 
+static PyObject* TreeMapObj_loc(TreeMapObj *self, PyObject *args) {
+    int idx;
+    if (!PyArg_ParseTuple(args, "i:loc", &idx)) {
+        return NULL;
+    }
+    int loc = idx;
+    if (loc < 0) {
+        loc += (int)self->size;
+    }
+    avl_map_t *node = (avl_map_t *)avl_node_loc((avl_node_t *)self->root, loc);
+    if (!node) {
+        PyErr_SetString(
+            PyExc_IndexError, "TreeMap index out of range"
+        );
+        return NULL;
+    }
+    PyObject *key = AVL_KEY(node);
+    PyObject *val = node->val;
+    return Py_BuildValue("(OO)", key, val);
+}
+
+static PyObject* TreeMapObj_at_most(TreeMapObj *self, PyObject *args) {
+    PyObject *key;
+    if (!PyArg_ParseTuple(args, "O:at_most", &key)) {
+        return NULL;
+    }
+    int ret;
+    avl_map_t *node = (avl_map_t *)avl_node_at_most(
+        (avl_node_t *)self->root, key, &ret);
+    if (ret < 0) {
+        return NULL;
+    } else if (ret == 0) {
+        Py_RETURN_NONE;
+    }
+    key = AVL_KEY(node);
+    Py_INCREF(key);
+    return key;
+}
+
+static PyObject* TreeMapObj_at_least(TreeMapObj *self, PyObject *args) {
+    PyObject *key;
+    if (!PyArg_ParseTuple(args, "O:at_least", &key)) {
+        return NULL;
+    }
+    int ret;
+    avl_map_t *node = (avl_map_t *)avl_node_at_least(
+        (avl_node_t *)self->root, key, &ret);
+    if (ret < 0) {
+        return NULL;
+    } else if (ret == 0) {
+        Py_RETURN_NONE;
+    }
+    key = AVL_KEY(node);
+    Py_INCREF(key);
+    return key;
+}
+
 /* init */
 static PyObject*
 TreeMapObj_init(TreeMapObj *self, PyObject *args, PyObject *kwargs) {
@@ -351,6 +408,24 @@ static PyMethodDef TreeMapObj_Methods[] = {
         (PyCFunction)TreeMapObj_keys,
         METH_NOARGS,
         "Get all keys of the TreeMap in an sorted list."
+    },
+    {
+        "loc",
+        (PyCFunction)TreeMapObj_loc,
+        METH_VARARGS,
+        "Return the (key, val) pair at the given location."
+    },
+    {
+        "at_most",
+        (PyCFunction)TreeMapObj_at_most,
+        METH_VARARGS,
+        "Get the largest key in the TreeMap that is not bigger than the given key."
+    },
+    {
+        "at_least",
+        (PyCFunction)TreeMapObj_at_least,
+        METH_VARARGS,
+        "Get the smallest key in the TreeMap that is not smaller than the given key."
     },
     {
         "max",
