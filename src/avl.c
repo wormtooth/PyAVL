@@ -113,7 +113,7 @@ avl_node_foreach(avl_node_t *root, avl_func func, void *extra) {
 }
 
 extern avl_node_t*
-avl_node_at(avl_node_t *root, int loc) {
+avl_node_loc(avl_node_t *root, int loc) {
     if (loc < 0 || loc >= AVL_SIZE0(root)) {
         return NULL;
     }
@@ -131,6 +131,50 @@ avl_node_at(avl_node_t *root, int loc) {
     }
 
     return root;
+}
+
+extern avl_node_t*
+avl_node_at_most(avl_node_t *root, PyObject *key, int *ret) {
+    int cnt = 0;
+    avl_node_t *ans = NULL;
+    while (root) {
+        int cmp = _avl_py_cmp(key, AVL_KEY(root));
+        if (cmp == -2) {
+            *ret = -1;
+            return NULL;
+        } else if (cmp >= 0) {
+            cnt += (1 + AVL_SIZE0(AVL_LEFT(root)));
+            ans = root;
+            root = AVL_RIGHT(root);
+        } else {
+            root = AVL_LEFT(root);
+        }
+    }
+
+    *ret = cnt;
+    return ans;
+}
+
+extern avl_node_t*
+avl_node_at_least(avl_node_t *root, PyObject *key, int *ret) {
+    int cnt = 0;
+    avl_node_t *ans = NULL;
+    while (root) {
+        int cmp = _avl_py_cmp(key, AVL_KEY(root));
+        if (cmp == -2) {
+            *ret = -1;
+            return NULL;
+        } else if (cmp <= 0) {
+            cnt += (1 + AVL_SIZE0(AVL_RIGHT(root)));
+            ans = root;
+            root = AVL_LEFT(root);
+        } else {
+            root = AVL_RIGHT(root);
+        }
+    }
+
+    *ret = cnt;
+    return ans;
 }
 
 /* Implementation of Static Functions */

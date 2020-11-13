@@ -14,7 +14,7 @@
  * Then `your_ext_t *` can be casted to `avl_node_t *` when used in insert, delete,
  * find and foreach.
  * 
- * @version 0.3
+ * @version 0.4
  * 
  * @copyright Copyright (c) 2020
  * 
@@ -183,7 +183,7 @@ extern void
 avl_node_foreach(avl_node_t *root, avl_func func, void *extra);
 
 /**
- * @brief Get the node at a given position in an AVL tree.
+ * @brief Get the node located at a given position in an AVL tree.
  * 
  * @param root The root of an AVL tree.
  * @param loc The location index of the node to get, indexed from 0.
@@ -191,7 +191,31 @@ avl_node_foreach(avl_node_t *root, avl_func func, void *extra);
  * if the index is in the range.
  */
 extern avl_node_t*
-avl_node_at(avl_node_t *root, int loc);
+avl_node_loc(avl_node_t *root, int loc);
+
+/**
+ * @brief Get the node with largest node->key <= key
+ * 
+ * @param root The root of an AVL tree.
+ * @param key The key to compare.
+ * @param ret Reture code of the function.
+ * @return The node with largest node->key <= key, and set ret to the number of
+ * nodes satisfying node->key <= key. On error, set ret to -1 and return NULL.
+ */
+extern avl_node_t*
+avl_node_at_most(avl_node_t *root, PyObject *key, int *ret);
+
+/**
+ * @brief Get the node with smallest node->key >= key
+ * 
+ * @param root The root of an AVL tree.
+ * @param key The key to compare.
+ * @param ret Reture code of the function.
+ * @return The node with smallest node->key >= key, and set ret to the number of
+ * nodes satisfying node->key >= key. On error, set ret to -1 and return NULL.
+ */
+extern avl_node_t*
+avl_node_at_least(avl_node_t *root, PyObject *key, int *ret);
 
 /**
  *  `avl_iter_t` provides iterator protocol for `avl_node_t *`
